@@ -10,12 +10,12 @@ import RemoveStudent from './components/Admin/RemoveStudent';
 import UpdateStudentProfile from './components/Admin/UpdateStudentProfile';
 import AddFaculty from './components/Admin/AddFaculty';
 import MoreFaculty from './components/Admin/MoreFaculty';
-// import FacultyLogin from './components/Faculty/FacultyLogin';
-// import FacultyDashboard from './components/Faculty/FacultyDashboard';
-// import FacultyProfile from './components/Faculty/FacultyProfile';
-// import AttendanceMarking from './components/Faculty/AttendanceMarking';
-// import StudentsMarking from './components/Faculty/StudentsMarking';
-// import StudentsAbsentees from './components/Faculty/StudentsAbsentees';
+import FacultyLogin from './components/Faculty/FacultyLogin';
+import FacultyDashboard from './components/Faculty/FacultyDashboard';
+import FacultyProfile from './components/Faculty/FacultyProfile';
+import AttendanceMarking from './components/Faculty/AttendanceMarking';
+import StudentsMarking from './components/Faculty/StudentsMarking';
+import StudentsAbsentees from './components/Faculty/StudentsAbsentees';
 
 
 function App() {
@@ -32,12 +32,12 @@ function App() {
         <Route path="/admin/manage-students/update" element={<UpdateStudentProfile />} />
         <Route path="/admin/manage-faculty/add-faculty" element={<AddFaculty />} />
         <Route path="/admin/manage-faculty/more-faculty" element={<MoreFaculty />} />
-        {/* <Route path="/faculty/login" element={<FacultyLogin />} />
+        <Route path="/faculty/login" element={<FacultyLogin />} />
         <Route path="/faculty/dashboard/:id" element={<FacultyDashboard />} />
         <Route path="/faculty/profile/:id" element={<FacultyProfile />} />
         <Route path="/faculty/attendance-marking/:id" element={<AttendanceMarking />} />
         <Route path="/faculty/students-absentees" element={<StudentsAbsentees />} />
-        <Route path="/faculty/students-marking" element={<StudentsMarking/>} /> */}
+        <Route path="/faculty/students-marking" element={<StudentsMarking/>} />
       </Routes>
     </Router>
   );
