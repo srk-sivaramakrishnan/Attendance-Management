@@ -1,0 +1,90 @@
+.back-link {
+  display: inline-block;
+  margin: 20px;
+  color: #EEEEEE; 
+  text-decoration: none;
+  font-size: 1.3rem;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+
+h2 {
+  text-align: center;
+  font-size: 2.5rem; 
+  margin-bottom: 50px;
+  color:#eeeeee
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+.form-group {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1.2rem; 
+  margin-bottom: 5px;
+  font-weight: bold;
+  color:#eeeeee
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="date"],
+textarea[name="address"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem; /* Increase font size */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+textarea {
+  height: 40px; /* Set a specific height for textarea */
+}
+
+button[type="submit"],
+.add-more-btn button {
+  padding: 10px 20px;
+  font-size: 1.2rem; /* Increase font size */
+  background-color:  #DC5F00;;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-more-btn {
+  flex: 1;
+  text-align: left;
+  margin-right: 10px; /* Adjust margin */
+}
+
+.add-more-btn a {
+  text-decoration: underline; /* Maintain underline style */
+  font-size: 1.3rem; /* Adjust font size */
+  color:#DC5F00;
+}
+
+.add-more-btn a:hover {
+  text-decoration: underline;
+  color:#eeeeee
+}
+
+.add-student-btn {
+  flex: 1;
+  text-align: right;
+}

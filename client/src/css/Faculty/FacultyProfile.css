@@ -1,0 +1,31 @@
+.profile {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .profile-picture {
+    margin-bottom: 20px;
+  }
+  
+  .profile-picture img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  
+  .profile-details {
+    text-align: left;
+    display: inline-block;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .profile-details p {
+    margin: 5px 0;
+  }
+  

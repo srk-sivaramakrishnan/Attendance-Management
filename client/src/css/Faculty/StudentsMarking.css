@@ -1,0 +1,35 @@
+.students-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.student-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  width: 150px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.student-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.student-card.absent {
+  background-color: red;
+}
+
+.student-card.onDuty {
+  background-color: yellow;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
