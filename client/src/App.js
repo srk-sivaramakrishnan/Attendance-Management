@@ -16,6 +16,9 @@ import FacultyProfile from './components/Faculty/FacultyProfile';
 import AttendanceMarking from './components/Faculty/AttendanceMarking';
 import StudentsMarking from './components/Faculty/StudentsMarking';
 import StudentsAbsentees from './components/Faculty/StudentsAbsentees';
+import StudentLogin from './components/Student/StudentLogin';
+import StudentDashboard from './components/Student/StudentDashboard';
+import StudentProfile from './components/Student/StudentProfile';
 
 
 function App() {
@@ -38,6 +41,9 @@ function App() {
         <Route path="/faculty/attendance-marking/:id" element={<AttendanceMarking />} />
         <Route path="/faculty/students-absentees" element={<StudentsAbsentees />} />
         <Route path="/faculty/students-marking" element={<StudentsMarking/>} />
+        <Route path="/student/login" element={<StudentLogin />} />
+        <Route path="/student/dashboard/:id" element={<StudentDashboard />} />
+        <Route path="/student/profile/:id" element={<StudentProfile />} />
       </Routes>
     </Router>
   );

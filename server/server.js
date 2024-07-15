@@ -461,18 +461,11 @@ app.post('/api/attendance1', async (req, res) => {
 //          Attendance2
 app.post('/api/attendance2', (req, res) => {
   const { presentStudents, absentees, onDutyStudents } = req.body;
-
-  // Validate the incoming data
   if (!Array.isArray(presentStudents) || !Array.isArray(absentees) || !Array.isArray(onDutyStudents)) {
     return res.status(400).json({ success: false, message: 'Invalid data format' });
   }
-
-  // Combine all students into a single array
   const allStudents = [...presentStudents, ...absentees, ...onDutyStudents];
-
-  // Prepare values array for batch insertion
   const values = allStudents.map(student => [student.roll_no, student.name, student.status]);
-
   const query = 'INSERT INTO attendance2 (roll_no, name, status) VALUES ?';
 
   connection.query(query, [values], (err, results) => {
@@ -485,6 +478,63 @@ app.post('/api/attendance2', (req, res) => {
   });
 });
 
+// ==================================== Student Componenets Starts ======================================
+
+// Student login route
+app.get('/api/student/details/:id', (req, res) => {
+  const studentId = req.params.id;
+  const query = 'SELECT * FROM students WHERE id = ?';
+
+  connection.query(query, [studentId], (err, results) => {
+    if (err) {
+      console.error('Error fetching student details:', err);
+      return res.status(500).json({ success: false, message: 'Database error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: 'Student not found' });
+    }
+
+    const student = results[0];
+    return res.status(200).json({ success: true, data: student });
+  });
+});
+
+// Student Profile
+app.get('/api/student/details/:id', (req, res) => {
+  const studentId = req.params.id;
+  const query = 'SELECT * FROM students WHERE id = ?';
+
+  connection.query(query, [studentId], (err, results) => {
+    if (err) {
+      console.error('Error fetching student details:', err);
+      return res.status(500).json({ success: false, message: 'Database error' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: 'Student not found' });
+    }
+
+    const student = results[0];
+    return res.status(200).json({ success: true, data: student });
+  });
+});
+
+// Server-side endpoint for student profile picture upload
+app.post('/api/upload/profile-picture', upload.single('profilePicture'), (req, res) => {
+  const { studentId } = req.body;
+  const profilePicturePath = `/uploads/${req.file.filename}`;
+
+  const query = 'UPDATE students SET profile_picture = ? WHERE id = ?';
+  connection.query(query, [profilePicturePath, studentId], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+      return;
+    }
+
+    res.json({ success: true, message: 'Profile picture uploaded successfully', filePath: profilePicturePath });
+  });
+});
 
 //Start serverss
 const PORT = process.env.PORT || 5000;

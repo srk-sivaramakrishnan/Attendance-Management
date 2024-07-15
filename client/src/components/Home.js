@@ -9,7 +9,7 @@ const Home = () => {
       <div className="login-links">
         <Link to="/faculty/login" className="login-link">Faculty Login</Link>
         <Link to="/admin/login" className="login-link">Admin Login</Link>
-        <Link to="/student-login" className="login-link">Student Login</Link>
+        <Link to="/student/login" className="login-link">Student Login</Link>
       </div>
     </div>
 
