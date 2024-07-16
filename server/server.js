@@ -460,34 +460,80 @@ app.post('/api/attendance1', async (req, res) => {
 
 //          Attendance2
 app.post('/api/attendance2', (req, res) => {
-  const { presentStudents, absentees, onDutyStudents } = req.body;
-  if (!Array.isArray(presentStudents) || !Array.isArray(absentees) || !Array.isArray(onDutyStudents)) {
-    return res.status(400).json({ success: false, message: 'Invalid data format' });
+  const { presentStudents, absentees, onDutyStudents, date } = req.body;
+
+  if (!date) {
+    return res.status(400).json({ success: false, message: 'Date is required' });
   }
+
   const allStudents = [...presentStudents, ...absentees, ...onDutyStudents];
-  const values = allStudents.map(student => [student.roll_no, student.name, student.status]);
-  const query = 'INSERT INTO attendance2 (roll_no, name, status) VALUES ?';
 
-  connection.query(query, [values], (err, results) => {
-    if (err) {
-      console.error('Error inserting students:', err);
-      return res.status(500).json({ success: false, message: 'Internal server error' });
+  const insertAttendance = student => {
+    return new Promise((resolve, reject) => {
+      const query = 'INSERT INTO attendance2 (roll_no, date, status) VALUES (?, ?, ?)';
+      connection.query(query, [student.roll_no, date, student.status], (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result);
+      });
+    });
+  };
+
+  const updateAttendancePercentage = roll_no => {
+    return new Promise((resolve, reject) => {
+      const totalClassesQuery = 'SELECT COUNT(*) AS total FROM attendance2 WHERE roll_no = ?';
+      connection.query(totalClassesQuery, [roll_no], (err, totalResult) => {
+        if (err) {
+          return reject(err);
+        }
+
+        const attendedClassesQuery = "SELECT COUNT(*) AS attended FROM attendance2 WHERE roll_no = ? AND status = 'present'";
+        connection.query(attendedClassesQuery, [roll_no], (err, attendedResult) => {
+          if (err) {
+            return reject(err);
+          }
+
+          const totalClasses = totalResult[0].total;
+          const attendedClasses = attendedResult[0].attended;
+          const attendancePercentage = (attendedClasses / totalClasses) * 100;
+
+          const updateQuery = 'UPDATE students SET attendance_percentage = ? WHERE roll_no = ?';
+          connection.query(updateQuery, [attendancePercentage, roll_no], (err, updateResult) => {
+            if (err) {
+              return reject(err);
+            }
+            resolve(updateResult);
+          });
+        });
+      });
+    });
+  };
+
+  const processStudents = async () => {
+    try {
+      await Promise.all(allStudents.map(insertAttendance));
+      await Promise.all(allStudents.map(student => updateAttendancePercentage(student.roll_no)));
+      res.json({ success: true, message: 'Attendance marked and percentages updated successfully' });
+    } catch (err) {
+      console.error('Error processing attendance:', err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
     }
+  };
 
-    res.json({ success: true, message: 'Students attendance recorded successfully' });
-  });
+  processStudents();
 });
 
 // ==================================== Student Componenets Starts ======================================
 
 // Student login route
-app.get('/api/student/details/:id', (req, res) => {
-  const studentId = req.params.id;
-  const query = 'SELECT * FROM students WHERE id = ?';
+app.post('/api/student/login', (req, res) => {
+  const { student_id, password } = req.body;
+  const query = 'SELECT * FROM students WHERE roll_no = ?';
 
-  connection.query(query, [studentId], (err, results) => {
+  connection.query(query, [student_id], (err, results) => {
     if (err) {
-      console.error('Error fetching student details:', err);
+      console.error('Error executing query:', err);
       return res.status(500).json({ success: false, message: 'Database error' });
     }
 
@@ -496,7 +542,12 @@ app.get('/api/student/details/:id', (req, res) => {
     }
 
     const student = results[0];
-    return res.status(200).json({ success: true, data: student });
+
+    if (password === student.password) {
+      return res.status(200).json({ success: true, message: 'Login successful', id: student.id });
+    } else {
+      return res.status(401).json({ success: false, message: 'Incorrect password' });
+    }
   });
 });
 
@@ -533,6 +584,35 @@ app.post('/api/upload/profile-picture', upload.single('profilePicture'), (req, r
     }
 
     res.json({ success: true, message: 'Profile picture uploaded successfully', filePath: profilePicturePath });
+  });
+});
+
+//Students Attendance Percentage
+app.get('/api/student/attendance-percentage/:roll_no', (req, res) => {
+  const roll_no = req.params.roll_no;
+  
+  const queryTotalClasses = 'SELECT COUNT(*) AS totalClasses FROM attendance2 WHERE roll_no = ?';
+  const queryPresentClasses = 'SELECT COUNT(*) AS presentClasses FROM attendance2 WHERE roll_no = ? AND status = "present"';
+
+  connection.query(queryTotalClasses, [roll_no], (err, totalResults) => {
+      if (err) {
+          console.error('Error fetching total classes:', err);
+          return res.status(500).json({ success: false, message: 'Internal server error' });
+      }
+
+      connection.query(queryPresentClasses, [roll_no], (err, presentResults) => {
+          if (err) {
+              console.error('Error fetching present classes:', err);
+              return res.status(500).json({ success: false, message: 'Internal server error' });
+          }
+
+          const totalClasses = totalResults[0].totalClasses;
+          const presentClasses = presentResults[0].presentClasses;
+
+          const attendancePercentage = totalClasses ? (presentClasses / totalClasses) * 100 : 0;
+
+          res.json({ success: true, attendancePercentage });
+      });
   });
 });
 
