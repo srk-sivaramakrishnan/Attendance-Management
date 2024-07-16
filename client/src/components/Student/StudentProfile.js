@@ -84,6 +84,7 @@ const StudentProfile = () => {
         <p>Address: {studentDetails.address}</p>
         <p>Blood Group: {studentDetails.blood_group}</p>
         <p>Accommodation: {studentDetails.accommodation}</p>
+        <p><strong>Attendance Percentage:</strong> {studentDetails.attendance_percentage.toFixed(2)}%</p>
       </div>
     </div>
   );

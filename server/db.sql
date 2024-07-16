@@ -40,6 +40,9 @@ CREATE TABLE students (
 );
 
 ALTER TABLE students ADD COLUMN profile_picture VARCHAR(255);
+ALTER TABLE students ADD UNIQUE (roll_no);
+ALTER TABLE students ADD COLUMN attendance_percentage FLOAT DEFAULT 100.0;
+
 
 -- Sample query to fetch all student
 SELECT * FROM students;
@@ -63,6 +66,8 @@ CREATE TABLE faculty (
 
 ALTER TABLE faculty ADD COLUMN profile_picture VARCHAR(255);
 
+
+
 -- Sample query to fetch all faculty
 SELECT * FROM faculty;
 Drop table faculty;
@@ -78,23 +83,47 @@ CREATE TABLE attendance1 (
 );
 
 CREATE TABLE attendance2 (
-  roll_no VARCHAR(10) NOT NULL,
-  name VARCHAR(100) NOT NULL,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  roll_no VARCHAR(20) NOT NULL,
+  date DATE NOT NULL,
   status ENUM('present', 'absent', 'onDuty') NOT NULL,
-  PRIMARY KEY (roll_no)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
 
 -- Sample query to fetch all faculty
 SELECT * FROM attendance2;
 Drop table attendance2;
 
--- Table for Absentees
-CREATE TABLE absentees (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    roll_no VARCHAR(20) NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
+DELIMITER //
 
+CREATE PROCEDURE markAttendance (
+    IN student_roll_no VARCHAR(20),
+    IN attendance_status ENUM('present', 'absent', 'onDuty'),
+    IN class_date DATE
+)
+BEGIN
+    DECLARE total_classes INT;
+    DECLARE attended_classes INT;
+    DECLARE new_attendance_percentage FLOAT;
+
+    -- Insert attendance record
+    INSERT INTO attendance2 (roll_no, date, status) VALUES (student_roll_no, class_date, attendance_status);
+
+    -- Calculate total number of classes
+    SELECT COUNT(*) INTO total_classes FROM attendance2 WHERE roll_no = student_roll_no;
+
+    -- Calculate number of attended classes
+    SELECT COUNT(*) INTO attended_classes FROM attendance2 WHERE roll_no = student_roll_no AND status = 'present';
+
+    -- Calculate new attendance percentage
+    SET new_attendance_percentage = (attended_classes / total_classes) * 100;
+
+    -- Update student's attendance percentage
+    UPDATE students SET attendance_percentage = new_attendance_percentage WHERE roll_no = student_roll_no;
+END //
+
+DELIMITER ;
 
